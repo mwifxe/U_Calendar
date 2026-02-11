@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Universitario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assets/catlog.png">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="header">
+    <h1>Calendario Universitario</h1>
+    <p class="subtitle">Primer Ciclo 2026</p>
+</div>
+
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-dot" style="background: var(--desarrollo);"></div>
+        <span>Desarrollo Personal</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background: var(--matematica);"></div>
+        <span>Matemática I</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background: var(--teologia);"></div>
+        <span>Teología</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background: var(--filosofia);"></div>
+        <span>Filosofía</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background: var(--redaccion);"></div>
+        <span>Redacción</span>
+    </div>
+</div>
+
+<!-- Loading state -->
+<div class="container" id="loading">
+    <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando calendario...</p>
+    </div>
+</div>
+
+<!-- Calendar content -->
+<div class="container" id="container" style="display:none;"></div>
+
+<!-- Error state -->
+<div class="container" id="error-state" style="display:none;">
+    <div class="error-message">
+        <p>Error al cargar el calendario</p>
+        <button class="btn-save" onclick="location.reload()">Reintentar</button>
+    </div>
+</div>
+
+<!-- MODAL DE NOTAS -->
+<div class="modal-overlay" id="modalNotasOverlay"></div>
+<div class="modal" id="modalNotas">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+        <div class="modal-materia" id="modalNotasMateria"></div>
+        <div class="modal-titulo" id="modalNotasTitulo"></div>
+        <div class="modal-info" id="modalNotasInfo"></div>
+    </div>
+    <div class="modal-content">
+        <div class="section-title">Notas y recordatorios</div>
+        <textarea id="notasTextarea" placeholder="Escribe tus notas aquí..."></textarea>
+    </div>
+    <div class="buttons">
+        <button class="btn-save" id="btnSaveNotas">Guardar</button>
+        <button class="btn-close" id="btnCloseNotas">Cerrar</button>
+    </div>
+</div>
+
+<!-- MODAL DE CREAR/EDITAR ACTIVIDAD -->
+<div class="modal-overlay" id="modalActividadOverlay"></div>
+<div class="modal" id="modalActividad">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+        <div class="modal-materia" id="modalActividadTitulo">Nueva Actividad</div>
+    </div>
+    <div class="modal-content">
+        <form id="formActividad">
+            <div class="form-group">
+                <label for="inputMateria">Materia</label>
+                <select id="inputMateria" required>
+                    <option value="">Selecciona una materia</option>
+                    <option value="Desarrollo Personal">Desarrollo Personal</option>
+                    <option value="Matemática I">Matemática I</option>
+                    <option value="Teología">Teología</option>
+                    <option value="Filosofía">Filosofía</option>
+                    <option value="Técnicas de Redacción">Técnicas de Redacción</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inputNombre">Nombre de la actividad</label>
+                <input type="text" id="inputNombre" placeholder="Ej: Ensayo sobre ética" required>
+            </div>
+            <div class="form-group">
+                <label for="inputFecha">Fecha de entrega</label>
+                <input type="text" id="inputFecha" placeholder="Ej: 15/03/26">
+            </div>
+            <div class="form-group">
+                <label for="inputPorcentaje">Porcentaje (opcional)</label>
+                <input type="text" id="inputPorcentaje" placeholder="Ej: 20%">
+            </div>
+            <div class="form-group">
+                <label for="inputDescripcion">Descripción (opcional)</label>
+                <textarea id="inputDescripcion" placeholder="Agrega detalles sobre la actividad..."></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="buttons">
+        <button class="btn-save" id="btnSaveActividad">Guardar Actividad</button>
+        <button class="btn-close" id="btnCloseActividad">Cancelar</button>
+    </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/renderer.js"></script>
+<script src="/js/modals.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

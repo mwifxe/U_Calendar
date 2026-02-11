@@ -1,0 +1,14 @@
+/home/ismael/RustroverProjects/U_calendar/backend/target/debug/deps/thiserror-360173b1de355d5d.d: /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/lib.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/aserror.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/display.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/var.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/private.rs /home/ismael/RustroverProjects/U_calendar/backend/target/debug/build/thiserror-7399ea59ce3845b2/out/private.rs
+
+/home/ismael/RustroverProjects/U_calendar/backend/target/debug/deps/libthiserror-360173b1de355d5d.rlib: /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/lib.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/aserror.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/display.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/var.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/private.rs /home/ismael/RustroverProjects/U_calendar/backend/target/debug/build/thiserror-7399ea59ce3845b2/out/private.rs
+
+/home/ismael/RustroverProjects/U_calendar/backend/target/debug/deps/libthiserror-360173b1de355d5d.rmeta: /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/lib.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/aserror.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/display.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/var.rs /home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/private.rs /home/ismael/RustroverProjects/U_calendar/backend/target/debug/build/thiserror-7399ea59ce3845b2/out/private.rs
+
+/home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/lib.rs:
+/home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/aserror.rs:
+/home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/display.rs:
+/home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/var.rs:
+/home/ismael/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.18/src/private.rs:
+/home/ismael/RustroverProjects/U_calendar/backend/target/debug/build/thiserror-7399ea59ce3845b2/out/private.rs:
+
+# env-dep:OUT_DIR=/home/ismael/RustroverProjects/U_calendar/backend/target/debug/build/thiserror-7399ea59ce3845b2/out
