@@ -119,6 +119,14 @@
     </div>
 </div>
 
+<!-- Configuración: cambiar URL cuando se suba a producción -->
+<script>
+    // Desarrollo local:
+    // window.API_BASE_URL = 'http://localhost:3000/api';
+    // Producción (Fly.io):
+    window.API_BASE_URL = 'https://u-calendar.fly.dev/api/calendario';
+</script>
+
 <script src="/js/api.js"></script>
 <script src="/js/renderer.js"></script>
 <script src="/js/modals.js"></script>

@@ -1,6 +1,4 @@
-backend/target/
-backend/.env
-*.md
-docker-compose.yml
+target/
+.env
 .git/
 .gitignore

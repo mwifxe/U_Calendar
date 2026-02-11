@@ -1,5 +1,5 @@
 const API = {
-    BASE: '/api',
+    BASE: window.API_BASE_URL || 'http://localhost:3000/api',
 
     async getCalendario() {
         const res = await fetch(`${this.BASE}/calendario`);

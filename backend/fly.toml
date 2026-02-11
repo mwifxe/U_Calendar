@@ -1,6 +1,6 @@
-# fly.toml — Fly.io configuration
+# fly.toml — Backend API only
 # DB: Supabase (external PostgreSQL)
-# `fly launch` va a actualizar este archivo con tu app name y región.
+# Frontend se hostea por separado
 
 app = 'u-calendar'
 primary_region = 'iad'
@@ -10,14 +10,14 @@ primary_region = 'iad'
 [env]
 SERVER_HOST = '0.0.0.0'
 SERVER_PORT = '8080'
-FRONTEND_DIR = '/app/frontend'
+# DATABASE_URL se configura como secret, NO aquí
 
 [http_service]
 internal_port = 8080
 force_https = true
-auto_stop_machines = 'stop'
+auto_stop_machines = 'off'
 auto_start_machines = true
-min_machines_running = 0
+min_machines_running = 1
 
 [http_service.concurrency]
 type = 'connections'
