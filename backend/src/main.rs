@@ -2,10 +2,12 @@ mod db;
 mod handlers;
 mod models;
 
-use axum::{routing::{delete, get, post, put}, Router};
-use tower_http::cors::{Any, CorsLayer};
+use axum::{
+    routing::{delete, get, post, put},
+    Router,
+};
 use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
-use sqlx::ConnectOptions;
+use tower_http::cors::{Any, CorsLayer};
 use std::str::FromStr;
 
 #[tokio::main]
@@ -14,8 +16,7 @@ async fn main() -> anyhow::Result<()> {
 
     tracing_subscriber::fmt::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     let connect_options = PgConnectOptions::from_str(&database_url)
         .expect("Invalid DATABASE_URL")
@@ -36,16 +37,16 @@ async fn main() -> anyhow::Result<()> {
 
     let api = Router::new()
         .route("/calendario", get(handlers::get_calendario))
-        .route("/semanas/{semana_id}/actividades", post(handlers::create_actividad))
+        .route(
+            "/semanas/{semana_id}/actividades",
+            post(handlers::create_actividad),
+        )
         .route("/actividades/{id}", put(handlers::update_actividad))
         .route("/actividades/{id}", delete(handlers::delete_actividad))
         .route("/actividades/{id}/notas", get(handlers::get_nota))
         .route("/actividades/{id}/notas", put(handlers::upsert_nota));
 
-    let app = Router::new()
-        .nest("/api", api)
-        .layer(cors)
-        .with_state(pool);
+    let app = Router::new().nest("/api", api).layer(cors).with_state(pool);
 
     let host = std::env::var("SERVER_HOST").unwrap_or_else(|_| "0.0.0.0".into());
     let port = std::env::var("SERVER_PORT").unwrap_or_else(|_| "3000".into());

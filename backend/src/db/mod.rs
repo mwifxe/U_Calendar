@@ -4,35 +4,31 @@ use uuid::Uuid;
 use crate::models::*;
 
 pub async fn get_full_calendario(pool: &PgPool) -> Result<CalendarioResponse, sqlx::Error> {
-    let periodos = sqlx::query_as::<_, PeriodoRow>(
-        "SELECT * FROM periodos ORDER BY orden",
-    )
+    let periodos = sqlx::query_as::<_, PeriodoRow>("SELECT * FROM periodos ORDER BY orden")
+        .persistent(false)
         .fetch_all(pool)
         .await?;
 
-    let semanas = sqlx::query_as::<_, SemanaRow>(
-        "SELECT * FROM semanas ORDER BY orden",
-    )
+    let semanas = sqlx::query_as::<_, SemanaRow>("SELECT * FROM semanas ORDER BY orden")
+        .persistent(false)
         .fetch_all(pool)
         .await?;
 
-    let actividades = sqlx::query_as::<_, ActividadRow>(
-        "SELECT * FROM actividades ORDER BY orden",
-    )
+    let actividades = sqlx::query_as::<_, ActividadRow>("SELECT * FROM actividades ORDER BY orden")
+        .persistent(false)
         .fetch_all(pool)
         .await?;
 
-    let parciales = sqlx::query_as::<_, ParcialRow>(
-        "SELECT * FROM parciales ORDER BY orden",
-    )
+    let parciales = sqlx::query_as::<_, ParcialRow>("SELECT * FROM parciales ORDER BY orden")
+        .persistent(false)
         .fetch_all(pool)
         .await?;
 
-    let notas_ids: Vec<(Uuid,)> = sqlx::query_as(
-        "SELECT actividad_id FROM notas WHERE contenido != ''",
-    )
-        .fetch_all(pool)
-        .await?;
+    let notas_ids: Vec<(Uuid,)> =
+        sqlx::query_as("SELECT actividad_id FROM notas WHERE contenido != ''")
+            .persistent(false)
+            .fetch_all(pool)
+            .await?;
     let notas_set: std::collections::HashSet<Uuid> =
         notas_ids.into_iter().map(|(id,)| id).collect();
 
@@ -104,15 +100,18 @@ pub async fn create_actividad(
     semana_id: Uuid,
     input: &CreateActividad,
 ) -> Result<ActividadRow, sqlx::Error> {
-    let max_orden: Option<(i16,)> = sqlx::query_as(
-        "SELECT COALESCE(MAX(orden), 0) FROM actividades WHERE semana_id = $1",
-    )
-        .bind(semana_id)
-        .fetch_optional(pool)
-        .await?;
+    let max_orden: Option<(i16,)> =
+        sqlx::query_as("SELECT COALESCE(MAX(orden), 0) FROM actividades WHERE semana_id = $1")
+            .persistent(false)
+            .bind(semana_id)
+            .fetch_optional(pool)
+            .await?;
     let next_orden = max_orden.map(|(o,)| o + 1).unwrap_or(1);
 
-    let clase = input.clase.clone().unwrap_or_else(|| get_clase_materia(&input.materia));
+    let clase = input
+        .clase
+        .clone()
+        .unwrap_or_else(|| get_clase_materia(&input.materia));
 
     sqlx::query_as::<_, ActividadRow>(
         r#"
@@ -121,6 +120,7 @@ pub async fn create_actividad(
         RETURNING *
         "#,
     )
+        .persistent(false)
         .bind(semana_id)
         .bind(&input.materia)
         .bind(&input.titulo)
@@ -138,9 +138,8 @@ pub async fn update_actividad(
     actividad_id: Uuid,
     input: &UpdateActividad,
 ) -> Result<Option<ActividadRow>, sqlx::Error> {
-    let current = sqlx::query_as::<_, ActividadRow>(
-        "SELECT * FROM actividades WHERE id = $1",
-    )
+    let current = sqlx::query_as::<_, ActividadRow>("SELECT * FROM actividades WHERE id = $1")
+        .persistent(false)
         .bind(actividad_id)
         .fetch_optional(pool)
         .await?;
@@ -154,17 +153,14 @@ pub async fn update_actividad(
     let fecha = input.fecha.as_ref().or(current.fecha.as_ref());
     let porcentaje = input.porcentaje.as_ref().or(current.porcentaje.as_ref());
     let descripcion = input.descripcion.as_ref().or(current.descripcion.as_ref());
-    let clase = input
-        .clase
-        .as_deref()
-        .unwrap_or_else(|| {
-            if input.materia.is_some() {
-                // Recalculate if materia changed
-                ""
-            } else {
-                &current.clase
-            }
-        });
+    let clase = input.clase.as_deref().unwrap_or_else(|| {
+        if input.materia.is_some() {
+            // Recalculate if materia changed
+            ""
+        } else {
+            &current.clase
+        }
+    });
     let clase = if clase.is_empty() && input.materia.is_some() {
         get_clase_materia(materia)
     } else if clase.is_empty() {
@@ -182,6 +178,7 @@ pub async fn update_actividad(
         RETURNING *
         "#,
     )
+        .persistent(false)
         .bind(actividad_id)
         .bind(materia)
         .bind(titulo)
@@ -197,6 +194,7 @@ pub async fn update_actividad(
 
 pub async fn delete_actividad(pool: &PgPool, actividad_id: Uuid) -> Result<bool, sqlx::Error> {
     let result = sqlx::query("DELETE FROM actividades WHERE id = $1")
+        .persistent(false)
         .bind(actividad_id)
         .execute(pool)
         .await?;
@@ -204,9 +202,8 @@ pub async fn delete_actividad(pool: &PgPool, actividad_id: Uuid) -> Result<bool,
 }
 
 pub async fn get_nota(pool: &PgPool, actividad_id: Uuid) -> Result<Option<NotaRow>, sqlx::Error> {
-    sqlx::query_as::<_, NotaRow>(
-        "SELECT * FROM notas WHERE actividad_id = $1",
-    )
+    sqlx::query_as::<_, NotaRow>("SELECT * FROM notas WHERE actividad_id = $1")
+        .persistent(false)
         .bind(actividad_id)
         .fetch_optional(pool)
         .await
@@ -226,6 +223,7 @@ pub async fn upsert_nota(
         RETURNING *
         "#,
     )
+        .persistent(false)
         .bind(actividad_id)
         .bind(contenido)
         .fetch_one(pool)
@@ -234,6 +232,7 @@ pub async fn upsert_nota(
 
 pub async fn delete_nota(pool: &PgPool, actividad_id: Uuid) -> Result<bool, sqlx::Error> {
     let result = sqlx::query("DELETE FROM notas WHERE actividad_id = $1")
+        .persistent(false)
         .bind(actividad_id)
         .execute(pool)
         .await?;
