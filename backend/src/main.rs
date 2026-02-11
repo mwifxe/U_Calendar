@@ -3,9 +3,10 @@ mod handlers;
 mod models;
 
 use axum::{routing::{delete, get, post, put}, Router};
-use sqlx::postgres::PgPoolOptions;
 use tower_http::cors::{Any, CorsLayer};
-use tower_http::services::ServeDir;
+use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
+use sqlx::ConnectOptions;
+use std::str::FromStr;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -16,30 +17,17 @@ async fn main() -> anyhow::Result<()> {
     let database_url = std::env::var("DATABASE_URL")
         .expect("DATABASE_URL must be set");
 
+    let connect_options = PgConnectOptions::from_str(&database_url)
+        .expect("Invalid DATABASE_URL")
+        .statement_cache_capacity(0);
+
     let pool = PgPoolOptions::new()
         .max_connections(10)
-        .connect(&database_url)
+        .connect_with(connect_options)
         .await
         .expect("Failed to connect to PostgreSQL");
 
     tracing::info!("Connected to PostgreSQL");
-
-    let tables_exist = sqlx::query_scalar::<_, bool>(
-        "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'periodos')"
-    )
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(false);
-
-    if !tables_exist {
-        tracing::error!("Tables not found in database. Please run the migrations first:");
-        tracing::error!("  1. Open Supabase SQL Editor");
-        tracing::error!("  2. Run migrations/001_init.sql");
-        tracing::error!("  3. Run migrations/002_seed.sql");
-        std::process::exit(1);
-    }
-
-    tracing::info!("Database tables verified");
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
@@ -54,12 +42,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/actividades/{id}/notas", get(handlers::get_nota))
         .route("/actividades/{id}/notas", put(handlers::upsert_nota));
 
-    let frontend_dir = std::env::var("FRONTEND_DIR").unwrap_or_else(|_| "../frontend".into());
-    tracing::info!("Serving frontend from: {frontend_dir}");
-
     let app = Router::new()
         .nest("/api", api)
-        .fallback_service(ServeDir::new(&frontend_dir))
         .layer(cors)
         .with_state(pool);
 
