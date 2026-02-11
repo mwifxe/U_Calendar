@@ -45,6 +45,29 @@ pub async fn create_actividad(
             .into_response();
     }
 
+    match db::semana_exists(&pool, semana_id).await {
+        Ok(false) => {
+            return (
+                StatusCode::NOT_FOUND,
+                Json(serde_json::json!({
+                    "error": "Semana no encontrada"
+                })),
+            )
+                .into_response();
+        }
+        Ok(true) => {}
+        Err(e) => {
+            tracing::error!("Error checking semana existence: {e}");
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "error": "Error al validar la semana"
+                })),
+            )
+                .into_response();
+        }
+    }
+
     match db::create_actividad(&pool, semana_id, &input).await {
         Ok(actividad) => (
             StatusCode::CREATED,
@@ -61,6 +84,21 @@ pub async fn create_actividad(
             .into_response(),
         Err(e) => {
             tracing::error!("Error creating actividad: {e}");
+
+            if e.as_database_error()
+                .and_then(|db_err| db_err.code())
+                .as_deref()
+                == Some("23503")
+            {
+                return (
+                    StatusCode::NOT_FOUND,
+                    Json(serde_json::json!({
+                        "error": "Semana no encontrada"
+                    })),
+                )
+                    .into_response();
+            }
+
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({

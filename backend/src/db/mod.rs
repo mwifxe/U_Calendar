@@ -95,18 +95,27 @@ pub async fn get_full_calendario(pool: &PgPool) -> Result<CalendarioResponse, sq
     Ok(response)
 }
 
+pub async fn semana_exists(pool: &PgPool, semana_id: Uuid) -> Result<bool, sqlx::Error> {
+    sqlx::query_scalar::<_, bool>("SELECT EXISTS(SELECT 1 FROM semanas WHERE id = $1)")
+        .persistent(false)
+        .bind(semana_id)
+        .fetch_one(pool)
+        .await
+}
+
 pub async fn create_actividad(
     pool: &PgPool,
     semana_id: Uuid,
     input: &CreateActividad,
 ) -> Result<ActividadRow, sqlx::Error> {
-    let max_orden: Option<(i16,)> =
-        sqlx::query_as("SELECT COALESCE(MAX(orden), 0) FROM actividades WHERE semana_id = $1")
-            .persistent(false)
-            .bind(semana_id)
-            .fetch_optional(pool)
-            .await?;
-    let next_orden = max_orden.map(|(o,)| o + 1).unwrap_or(1);
+    let (max_orden,): (i16,) = sqlx::query_as(
+        "SELECT COALESCE(MAX(orden), 0)::smallint FROM actividades WHERE semana_id = $1",
+    )
+        .persistent(false)
+        .bind(semana_id)
+        .fetch_one(pool)
+        .await?;
+    let next_orden = max_orden + 1;
 
     let clase = input
         .clase

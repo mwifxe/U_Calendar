@@ -41,10 +41,18 @@ async fn main() -> anyhow::Result<()> {
             "/semanas/{semana_id}/actividades",
             post(handlers::create_actividad),
         )
+        .route(
+            "/semanas/:semana_id/actividades",
+            post(handlers::create_actividad),
+        )
         .route("/actividades/{id}", put(handlers::update_actividad))
+        .route("/actividades/:id", put(handlers::update_actividad))
         .route("/actividades/{id}", delete(handlers::delete_actividad))
+        .route("/actividades/:id", delete(handlers::delete_actividad))
         .route("/actividades/{id}/notas", get(handlers::get_nota))
-        .route("/actividades/{id}/notas", put(handlers::upsert_nota));
+        .route("/actividades/:id/notas", get(handlers::get_nota))
+        .route("/actividades/{id}/notas", put(handlers::upsert_nota))
+        .route("/actividades/:id/notas", put(handlers::upsert_nota));
 
     let app = Router::new().nest("/api", api).layer(cors).with_state(pool);
 
